@@ -1,0 +1,44 @@
+diff --git a/CMCC_Player.cpp b/CMCC_Player.cpp
+index 6953415..33d1204 100755
+--- a/CMCC_Player.cpp
++++ b/CMCC_Player.cpp
+@@ -41,7 +41,7 @@ using namespace android;
+ 
+ #define SHOW_FIRST_FRAME_NO_SYNC 0
+ 
+-
++static int pause_flag=0;
+ const char* debugDumpEsFile =  NULL;//"/data/tmp/264.ts";
+ FILE* dumpfd = NULL;
+ 
+@@ -444,6 +444,7 @@ int32_t CmccPlayer::WriteData(PLAYER_STREAMTYPE_E type, uint8_t *pBuffer, uint32
+ bool CmccPlayer::Pause() {
+     ALOGI("Pause");
+     lp_lock(&mutex);
++    pause_flag=1;	
+     if (mIsTsStream) {
+         codec_pause(m_Tspcodec);
+     }
+@@ -567,10 +568,22 @@ bool CmccPlayer::Seek() {
+         ALOGI("m_bIsPlay is false");
+         ret = codec_reset(m_Tspcodec);
+         //m_Tspcodec->handle = -1;
++	    if(pause_flag==1)
++	    {
++		ret = codec_resume(m_Tspcodec);
++		pause_flag=0;
++	    }
+         ALOGI("Stop  codec_close After:%d\n", ret);
+     }
+     if (mIsEsVideo) {
+         ret = codec_reset(m_vpcodec);
++	    if(pause_flag==1)
++	    {
++		ret = codec_resume(m_vpcodec);
++		if (mIsEsAudio) 
++			ret = codec_resume(m_apcodec);			
++		pause_flag=0;
++	    }
+     }
+     if (mIsEsAudio) {
+         ret = codec_reset(m_apcodec);

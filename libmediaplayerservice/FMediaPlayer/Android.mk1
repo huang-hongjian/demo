@@ -1,0 +1,17 @@
+LOCAL_PATH:= $(call my-dir)
+include $(CLEAR_VARS)
+
+LOCAL_SRC_FILES:=                       \
+        FMediaPlayer.cpp               \
+        FMediaPlayerManage.cpp              \
+
+
+LOCAL_C_INCLUDES := \
+	$(TOP)/frameworks/av\media\libmediaplayerservice\FMediaPlayer            \
+
+LOCAL_MODULE:= libfmediaplayer
+
+LOCAL_MODULE_TAGS := eng
+
+include $(BUILD_STATIC_LIBRARY)
+
